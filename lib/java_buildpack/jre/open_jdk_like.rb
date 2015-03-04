@@ -46,6 +46,51 @@ module JavaBuildpack
         true
       end
 
+      # (see JavaBuildpack::Component::BaseComponent#compile)
+      def compile
+        download_tar
+        @droplet.copy_resources
+      end
+
+      # (see JavaBuildpack::Component::BaseComponent#release)
+      def release
+        @droplet.java_opts
+          .add_system_property('java.io.tmpdir', '$TMPDIR')
+          .push('-XX:+HeapDumpOnOutOfMemoryError')
+          .add_option('-XX:HeapDumpPath', '$PWD/oom_heapdump.hprof')
+          .add_option('-XX:OnOutOfMemoryError', killjava)
+          .concat memory
+      end
+
+      private
+
+      KEY_MEMORY_HEURISTICS = 'memory_heuristics'.freeze
+
+      KEY_MEMORY_SIZES = 'memory_sizes'.freeze
+
+      VERSION_8 = JavaBuildpack::Util::TokenizedVersion.new('1.8.0').freeze
+
+      private_constant :KEY_MEMORY_HEURISTICS, :KEY_MEMORY_SIZES, :VERSION_8
+
+      def killjava
+        @droplet.sandbox + 'bin/killjava.sh'
+      end
+
+      def memory
+        sizes      = @configuration[KEY_MEMORY_SIZES] ? @configuration[KEY_MEMORY_SIZES].clone : {}
+        heuristics = @configuration[KEY_MEMORY_HEURISTICS] ? @configuration[KEY_MEMORY_HEURISTICS].clone : {}
+
+        if @version < VERSION_8
+          heuristics.delete 'metaspace'
+          sizes.delete 'metaspace'
+        else
+          heuristics.delete 'permgen'
+          sizes.delete 'permgen'
+        end
+
+        OpenJDKMemoryHeuristicFactory.create_memory_heuristic(sizes, heuristics, @version).resolve
+      end
+
     end
 
   end
