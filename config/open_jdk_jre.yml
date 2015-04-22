@@ -21,7 +21,8 @@ version: 1.8.0_+
 memory_sizes:
   metaspace: 140m..200m
   # workaround for https://github.com/cloudfoundry/java-buildpack/issues/157
-  native: 300m..
+  # must prepare for mmap of all jars in WEB-INF/lib/*.jar too
+  native: 330m..
 # permgen: 64m..
 memory_heuristics:
   heap: 70
