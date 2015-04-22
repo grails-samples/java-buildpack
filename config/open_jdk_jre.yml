@@ -27,7 +27,7 @@ memory_calculator:
     heap: 
     metaspace: 140m..200m
     # workaround for https://github.com/cloudfoundry/java-buildpack/issues/157
-    native: 300m..
+    native: 330m..
     #permgen: 64m..
     stack: 228k..
   memory_heuristics:
@@ -41,5 +41,6 @@ memory_calculator:
     heap: 100%
     metaspace: 100%
     permgen: 100%
+
 
 
