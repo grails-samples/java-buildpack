@@ -73,10 +73,9 @@ module JavaBuildpack
       container = component_detection('container', @containers, true).first
       no_container unless container
 
-      commands = []
-      commands << component_detection('JRE', @jres, true).first.release
-      component_detection('framework', @frameworks, false).map(&:release)
-      commands << container.release
+      component_detection('JRE', @jres, true).first.release
+      component_detection('framework', @frameworks, false).each(&:release)
+      command = container.respond_to?(:main_release) ? container.main_release : container.release
 
       payload = {
         'addons'                => [],
