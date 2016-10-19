@@ -35,12 +35,10 @@ memory_calculator:
     metaspace: 15
     #permgen: 10
     stack: 5
-    native: 10
+    native: 15
 
   memory_initials:
     heap: 100%
     metaspace: 100%
     permgen: 100%
-
-
 

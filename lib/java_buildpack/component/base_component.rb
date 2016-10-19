@@ -84,6 +84,11 @@ module JavaBuildpack
         (command_environment + ' ' + release).strip
       end
 
+      # release prepended by the command_environment
+      def main_release
+        (command_environment + ' ' + release).strip
+      end
+
       protected
 
       # Build the environment that's passed on the command line
